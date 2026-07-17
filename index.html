@@ -698,6 +698,10 @@
                 <div class="player-controls">
                     <!-- Reload Button to instantly clear stuck ads inside iframe -->
                     <button class="icon-btn" onclick="reloadStream()" title="Reload / Clear Ad Overlays">↻</button>
+                    
+                    <!-- Fallback if the stream blocks iframes -->
+                    <button class="icon-btn" onclick="window.open(currentLoadedUrl, '_blank')" title="Open Stream in New Tab">↗</button>
+
                     <!-- YouTube style Mini-player (Picture in Picture) -->
                     <button class="icon-btn" onclick="toggleMiniplayer()" title="Miniplayer Mode">🗗</button>
                     <!-- Theater / Tablet Mode -->
@@ -899,12 +903,12 @@
             if (isPastRace || url.includes("youtube.com")) {
                 container.innerHTML = `<iframe src="${url}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>`;
             } else {
-                // THE AD-SHIELD: allow-scripts, allow-same-origin, allow-presentation
-                // Intentionally NO allow-popups or allow-top-navigation! Blocks redirect ads.
+                // THE FIX: Added allow-forms allow-popups allow-popups-to-escape-sandbox
+                // This allows the third-party player scripts to initialize without crashing.
                 container.innerHTML = `
                     <iframe 
                         src="${url}" 
-                        sandbox="allow-scripts allow-same-origin allow-presentation"
+                        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-popups allow-popups-to-escape-sandbox"
                         allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
                         allowfullscreen
                         style="width: 100%; height: 100%; border: none; background: #000;">
